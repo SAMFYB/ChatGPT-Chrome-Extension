@@ -66,16 +66,7 @@
     const allMessages = threadContainer.querySelectorAll('article[data-testid^="conversation-turn-"]');
     console.log(`[Chat Nav] Total messages found: ${allMessages.length}`);
 
-    // Assume user messages are even turns
-    const userMessages = Array.from(allMessages).filter(article => {
-      const testid = article.getAttribute('data-testid');
-      const parts = testid.match(/conversation-turn-(\d+)/);
-      if (!parts) return false;
-      const turnNumber = parseInt(parts[1], 10);
-      return turnNumber % 2 === 0;
-    });
-
-    return userMessages;
+    return Array.from(allMessages);
   }
 
   function populateMessageList(messageElements) {
