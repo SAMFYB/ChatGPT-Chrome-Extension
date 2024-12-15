@@ -13,9 +13,9 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
+  transition: width 0.3s ease, height 0.3s ease, padding 0.3s ease;
 }
 
-/* Header Styles */
 #chat-nav-sidebar-header {
   display: flex;
   justify-content: space-between;
@@ -24,6 +24,7 @@
   padding: 5px;
   border-bottom: 1px solid #ccc;
   font-weight: bold;
+  transition: opacity 0.3s ease;
 }
 
 #chat-nav-toggle-button {
@@ -36,38 +37,41 @@
   line-height: 1;
 }
 
-/* Content wrapper */
+/* Content wrapper for search and list */
 #chat-nav-content {
   padding: 10px;
   overflow-y: auto;
   flex: 1; /* fill remaining space */
+  transition: opacity 0.3s ease;
 }
 
-/* Collapsed state hides the content */
+/* When collapsed, we want to show as a small button only */
+#chat-nav-sidebar.collapsed {
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+}
+
+/* Hide the title and just leave space for the toggle button */
+#chat-nav-sidebar.collapsed #chat-nav-sidebar-header span {
+  display: none;
+}
+
+/* Hide the main content */
 #chat-nav-sidebar.collapsed #chat-nav-content {
   display: none;
 }
 
-#chat-nav-sidebar input[type="text"] {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 5px;
-  box-sizing: border-box;
+/* Optional: If you don’t want the background visible, you can also change background on collapse: */
+#chat-nav-sidebar.collapsed {
+  background: #f1f1f1;
+  border-radius: 20px; /* a circle-like button */
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-#chat-nav-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-#chat-nav-list li {
-  margin-bottom: 8px;
-  padding: 5px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-}
-
-#chat-nav-list li:hover {
-  background-color: #e8e8e8;
+/* Adjust toggle button position when collapsed (optional) */
+#chat-nav-sidebar.collapsed #chat-nav-sidebar-header {
+  border-bottom: none;
+  justify-content: center;
 }
