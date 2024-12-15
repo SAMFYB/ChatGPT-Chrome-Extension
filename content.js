@@ -41,6 +41,12 @@
     const sidebar = document.createElement('div');
     sidebar.id = 'chat-nav-sidebar';
 
+    const searchBox = document.createElement('input');
+    searchBox.type = 'text';
+    searchBox.placeholder = 'Search...';
+    searchBox.addEventListener('input', filterMessages);
+    sidebar.appendChild(searchBox);
+
     const list = document.createElement('ul');
     list.id = 'chat-nav-list';
     sidebar.appendChild(list);
@@ -62,6 +68,15 @@
         msg.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
       list.appendChild(li);
+    });
+  }
+
+  function filterMessages(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const items = document.querySelectorAll('#chat-nav-list li');
+    items.forEach(item => {
+      const text = item.textContent.toLowerCase();
+      item.style.display = text.includes(searchTerm) ? '' : 'none';
     });
   }
 })();
