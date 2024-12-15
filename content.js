@@ -1,4 +1,18 @@
 (function() {
+  let lastUrl = location.href;
+  function checkUrlChange() {
+    if (location.href !== lastUrl) {
+      lastUrl = location.href;
+      console.log("[Chat Nav] URL changed. Reindexing...");
+      const threadContainer = getThreadContainer();
+      if (threadContainer) {
+        reindexMessagesAndUpdateSidebar(threadContainer);
+      }
+    }
+  }
+  // Run every second to check for URL changes
+  setInterval(checkUrlChange, 1000);
+
   let mutationObserver = null;
 
   // Remove DOMContentLoaded if it's never firing and start immediately,
