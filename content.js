@@ -126,6 +126,9 @@
     const sidebar = document.createElement('div');
     sidebar.id = 'chat-nav-sidebar';
 
+    // Start in collapsed state by default
+    sidebar.classList.add('collapsed');
+
     // Header with toggle
     const header = document.createElement('div');
     header.id = 'chat-nav-sidebar-header';
