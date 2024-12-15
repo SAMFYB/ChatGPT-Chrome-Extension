@@ -150,7 +150,7 @@
     });
     contentWrapper.appendChild(searchBox);
 
-    const listContainer = document.createElement('ul');
+    const listContainer = document.createElement('ol');
     listContainer.id = 'chat-nav-list';
     contentWrapper.appendChild(listContainer);
 

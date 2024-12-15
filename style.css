@@ -45,6 +45,20 @@
   transition: opacity 0.3s ease;
 }
 
+#chat-nav-list {
+  list-style-type: decimal; /* ensures numbering */
+  margin: 15px;
+  padding: 0;
+}
+
+#chat-nav-list li:nth-child(odd) {
+  background-color: #ffffff; /* white background for odd items */
+}
+
+#chat-nav-list li:nth-child(even) {
+  background-color: #f0f0f0; /* light gray background for even items */
+}
+
 /* When collapsed, we want to show as a small button only */
 #chat-nav-sidebar.collapsed {
   width: 40px;
