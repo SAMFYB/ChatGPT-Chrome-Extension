@@ -92,8 +92,7 @@
     messageElements.forEach((msgEl, index) => {
       const fullText = (msgEl.innerText || '').trim();
       const snippet = fullText.slice(0, 50).replace(/\s+/g, ' ');
-      const label = `User #${index + 1}: ${snippet}`;
-      addMessageListItem(label, () => {
+      addMessageListItem(snippet, () => {
         console.log(`[Chat Nav] Scrolling to message ID: ${msgEl.getAttribute('data-msg-id')}`);
         msgEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
@@ -178,16 +177,16 @@
     }
   }
 
-  function addMessageListItem(label, onClick) {
+  function addMessageListItem(snippet, onClick) {
     const listContainer = document.getElementById('chat-nav-list');
     if (!listContainer) {
       console.warn("[Chat Nav] Cannot add message item - #chat-nav-list not found.");
       return;
     }
 
-    console.log(`[Chat Nav] Adding list item: "${label}"`);
+    console.log(`[Chat Nav] Adding list item: "${snippet}"`);
     const listItem = document.createElement('li');
-    listItem.textContent = label;
+    listItem.textContent = snippet;
     listItem.addEventListener('click', onClick);
     listContainer.appendChild(listItem);
   }
