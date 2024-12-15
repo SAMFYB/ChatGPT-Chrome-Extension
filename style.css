@@ -2,11 +2,11 @@
   position: fixed;
   right: 10px;
   top: 50px;
-  width: 250px;
-  height: 400px;
+  width: 450px;
+  height: 600px;
   background: #f9f9f9;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 8px;
   z-index: 999999;
   font-family: sans-serif;
   font-size: 14px;
@@ -23,6 +23,8 @@
   background: #f1f1f1;
   padding: 5px;
   border-bottom: 1px solid #ccc;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
   font-weight: bold;
   transition: opacity 0.3s ease;
 }
@@ -46,9 +48,20 @@
 }
 
 #chat-nav-list {
-  list-style-type: decimal; /* ensures numbering */
+  list-style-type: none;
   margin: 15px;
   padding: 0;
+}
+
+#chat-nav-list li {
+  border-radius: 4px;
+  margin-bottom: 8px;
+  padding: 8px;
+}
+
+#chat-nav-list li:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
 }
 
 #chat-nav-list li:nth-child(odd) {
@@ -89,3 +102,20 @@
   border-bottom: none;
   justify-content: center;
 }
+
+#chat-nav-content input[type="text"] {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 6px 8px; /* increased padding for better feel */
+  box-sizing: border-box;
+  border: 1px solid #ccc; /* subtle border */
+  border-radius: 4px; /* rounded corners */
+  font-size: 14px;
+  background: #fff;
+}
+
+#chat-nav-content input[type="text"]:focus {
+  border-color: #888; /* slightly darker border on focus */
+  outline: none;      /* remove default outline */
+}
+

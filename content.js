@@ -82,7 +82,7 @@
 
     messageElements.forEach((msgEl, index) => {
       const fullText = (msgEl.innerText || '').trim();
-      const snippet = fullText.slice(0, 50).replace(/\s+/g, ' ');
+      const snippet = fullText.slice(0, 150).replace(/\s+/g, ' ') + '...';
       addMessageListItem(snippet, () => {
         console.log(`[Chat Nav] Scrolling to message ID: ${msgEl.getAttribute('data-msg-id')}`);
         msgEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -150,7 +150,7 @@
     });
     contentWrapper.appendChild(searchBox);
 
-    const listContainer = document.createElement('ol');
+    const listContainer = document.createElement('ul');
     listContainer.id = 'chat-nav-list';
     contentWrapper.appendChild(listContainer);
 
