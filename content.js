@@ -1,22 +1,15 @@
 (function() {
   let mutationObserver = null;
 
-  function init() {
-    const mainEl = document.querySelector('main');
-    if (mainEl) {
-      console.log("[Chat Nav] main element found, proceeding...");
-      startObserving();
-    } else {
-      console.log("[Chat Nav] main not found yet, retrying...");
-      setTimeout(init, 1000);
-    }
-  }
-
-  init();
+  // Remove DOMContentLoaded if it's never firing and start immediately,
+  // since run_at: document_idle means DOM is likely loaded anyway.
+  startObserving();
 
   function startObserving() {
     console.log("[Chat Nav] Attempting to find thread container...");
     const threadContainer = getThreadContainer();
+    console.log("[Chat Nav] threadContainer is:", threadContainer);
+
     if (!threadContainer) {
       console.log("[Chat Nav] Thread container not found, retrying in 1s...");
       setTimeout(startObserving, 1000);
@@ -70,7 +63,6 @@
   }
 
   function getUserMessages(threadContainer) {
-    // Get all messages
     const allMessages = threadContainer.querySelectorAll('article[data-testid^="conversation-turn-"]');
     console.log(`[Chat Nav] Total messages found: ${allMessages.length}`);
 
@@ -134,6 +126,28 @@
     const sidebar = document.createElement('div');
     sidebar.id = 'chat-nav-sidebar';
 
+    // Header with toggle
+    const header = document.createElement('div');
+    header.id = 'chat-nav-sidebar-header';
+
+    const title = document.createElement('span');
+    title.textContent = 'Chat Nav';
+    header.appendChild(title);
+
+    const toggleButton = document.createElement('button');
+    toggleButton.id = 'chat-nav-toggle-button';
+    toggleButton.textContent = '▼'; // Arrow indicating expand/collapse
+    toggleButton.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      toggleButton.textContent = sidebar.classList.contains('collapsed') ? '▼' : '▲';
+    });
+    header.appendChild(toggleButton);
+
+    sidebar.appendChild(header);
+
+    const contentWrapper = document.createElement('div');
+    contentWrapper.id = 'chat-nav-content';
+
     const searchBox = document.createElement('input');
     searchBox.type = 'text';
     searchBox.placeholder = 'Search...';
@@ -141,11 +155,13 @@
       console.log("[Chat Nav] Filtering messages with search term:", e.target.value);
       filterMessages(e.target.value.toLowerCase());
     });
-    sidebar.appendChild(searchBox);
+    contentWrapper.appendChild(searchBox);
 
     const listContainer = document.createElement('ul');
     listContainer.id = 'chat-nav-list';
-    sidebar.appendChild(listContainer);
+    contentWrapper.appendChild(listContainer);
+
+    sidebar.appendChild(contentWrapper);
 
     document.body.appendChild(sidebar);
     console.log("[Chat Nav] Sidebar created successfully.");
