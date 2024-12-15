@@ -64,6 +64,12 @@
     const userMessages = getUserMessages(threadContainer);
     console.log(`[Chat Nav] Found ${userMessages.length} user messages.`);
 
+    // Update the title each time we reindex
+    const titleEl = document.querySelector('#chat-nav-sidebar-header span');
+    if (titleEl) {
+      titleEl.textContent = `Chat Nav - ${document.title}`;
+    }
+
     // Assign IDs if not assigned
     userMessages.forEach((msgEl, index) => {
       if (!msgEl.hasAttribute('data-msg-id')) {
