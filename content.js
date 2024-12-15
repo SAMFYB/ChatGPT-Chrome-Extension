@@ -1,11 +1,18 @@
 (function() {
   let mutationObserver = null;
 
-  // Start once DOM is ready
-  document.addEventListener('DOMContentLoaded', () => {
-    console.log("[Chat Nav] DOMContentLoaded event fired.");
-    startObserving();
-  });
+  function init() {
+    const mainEl = document.querySelector('main');
+    if (mainEl) {
+      console.log("[Chat Nav] main element found, proceeding...");
+      startObserving();
+    } else {
+      console.log("[Chat Nav] main not found yet, retrying...");
+      setTimeout(init, 1000);
+    }
+  }
+
+  init();
 
   function startObserving() {
     console.log("[Chat Nav] Attempting to find thread container...");
