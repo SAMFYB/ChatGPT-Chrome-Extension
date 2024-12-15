@@ -2,8 +2,22 @@
   console.log("Chat Navigation Extension loaded.");
 
   const sidebar = createSidebar();
+  observeMutations();
 
-  // Simple function to reindex messages (mock logic for now)
+  function observeMutations() {
+    const threadContainer = document.querySelector('main div[class*="@container/thread"]');
+    if (!threadContainer) {
+      setTimeout(observeMutations, 1000);
+      return;
+    }
+
+    const observer = new MutationObserver(() => {
+      reindexMessages();
+    });
+    observer.observe(threadContainer, { childList: true, subtree: true });
+    reindexMessages(); // Initial run
+  }
+
   function reindexMessages() {
     const threadContainer = document.querySelector('main div[class*="@container/thread"]');
     if (!threadContainer) return;
@@ -50,7 +64,4 @@
       list.appendChild(li);
     });
   }
-
-  // Initial indexing attempt
-  reindexMessages();
 })();
