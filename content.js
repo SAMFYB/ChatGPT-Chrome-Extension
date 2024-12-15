@@ -137,8 +137,9 @@
     const header = document.createElement('div');
     header.id = 'chat-nav-sidebar-header';
 
+    const pageTitle = document.title; // get the current page's title
     const title = document.createElement('span');
-    title.textContent = 'Chat Nav';
+    title.textContent = `Chat Nav - ${pageTitle}`;
     header.appendChild(title);
 
     const toggleButton = document.createElement('button');
