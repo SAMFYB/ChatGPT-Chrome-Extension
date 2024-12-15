@@ -11,8 +11,7 @@
       "matches": ["https://chatgpt.com/c/*"],
       "js": ["content.js"],
       "css": ["style.css"],
-      "run_at": "document_idle",
-      "type": "module"
+      "run_at": "document_idle"
     }
   ],
   "icons": {

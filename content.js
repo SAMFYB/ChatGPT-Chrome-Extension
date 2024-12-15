@@ -1,5 +1,183 @@
-import { startObserving } from './mutation-handler.js';
+(function() {
+  let mutationObserver = null;
 
-document.addEventListener('DOMContentLoaded', () => {
-  startObserving();
-});
+  // Start once DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log("[Chat Nav] DOMContentLoaded event fired.");
+    startObserving();
+  });
+
+  function startObserving() {
+    console.log("[Chat Nav] Attempting to find thread container...");
+    const threadContainer = getThreadContainer();
+    if (!threadContainer) {
+      console.log("[Chat Nav] Thread container not found, retrying in 1s...");
+      setTimeout(startObserving, 1000);
+      return;
+    }
+
+    console.log("[Chat Nav] Thread container found. Setting up MutationObserver...");
+    mutationObserver = new MutationObserver(mutationCallback);
+    mutationObserver.observe(threadContainer, {
+      childList: true,
+      subtree: true
+    });
+
+    console.log("[Chat Nav] Running initial reindexing...");
+    reindexMessagesAndUpdateSidebar(threadContainer);
+  }
+
+  function mutationCallback(mutations) {
+    let shouldReindex = false;
+    for (const mutation of mutations) {
+      if (mutation.type === 'childList' && (mutation.addedNodes.length > 0 || mutation.removedNodes.length > 0)) {
+        console.log("[Chat Nav] Mutation observed: DOM changed in the thread container.");
+        shouldReindex = true;
+      }
+    }
+
+    if (shouldReindex) {
+      const threadContainer = getThreadContainer();
+      if (threadContainer) {
+        console.log("[Chat Nav] Reindexing due to observed mutations...");
+        reindexMessagesAndUpdateSidebar(threadContainer);
+      }
+    }
+  }
+
+  function reindexMessagesAndUpdateSidebar(threadContainer) {
+    console.log("[Chat Nav] Reindexing messages...");
+    const userMessages = getUserMessages(threadContainer);
+    console.log(`[Chat Nav] Found ${userMessages.length} user messages.`);
+
+    // Assign IDs if not assigned
+    userMessages.forEach((msgEl, index) => {
+      if (!msgEl.hasAttribute('data-msg-id')) {
+        const msgId = `user-msg-${index}`;
+        msgEl.setAttribute('data-msg-id', msgId);
+        console.log(`[Chat Nav] Assigned data-msg-id="${msgId}" to a user message.`);
+      }
+    });
+
+    populateMessageList(userMessages);
+  }
+
+  function getUserMessages(threadContainer) {
+    // Get all messages
+    const allMessages = threadContainer.querySelectorAll('article[data-testid^="conversation-turn-"]');
+    console.log(`[Chat Nav] Total messages found: ${allMessages.length}`);
+
+    // Assume user messages are even turns
+    const userMessages = Array.from(allMessages).filter(article => {
+      const testid = article.getAttribute('data-testid');
+      const parts = testid.match(/conversation-turn-(\d+)/);
+      if (!parts) return false;
+      const turnNumber = parseInt(parts[1], 10);
+      return turnNumber % 2 === 0;
+    });
+
+    return userMessages;
+  }
+
+  function populateMessageList(messageElements) {
+    console.log("[Chat Nav] Populating sidebar with user messages...");
+    createSidebarIfNeeded();
+    const listContainer = document.getElementById('chat-nav-list');
+    if (!listContainer) {
+      console.warn("[Chat Nav] #chat-nav-list not found. Cannot populate messages.");
+      return;
+    }
+
+    clearMessageList();
+
+    messageElements.forEach((msgEl, index) => {
+      const fullText = (msgEl.innerText || '').trim();
+      const snippet = fullText.slice(0, 50).replace(/\s+/g, ' ');
+      const label = `User #${index + 1}: ${snippet}`;
+      addMessageListItem(label, () => {
+        console.log(`[Chat Nav] Scrolling to message ID: ${msgEl.getAttribute('data-msg-id')}`);
+        msgEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    console.log("[Chat Nav] Sidebar population complete.");
+  }
+
+  function getThreadContainer() {
+    const mainEl = document.querySelector('main');
+    if (!mainEl) {
+      console.log("[Chat Nav] <main> not found.");
+      return null;
+    }
+
+    const container = mainEl.querySelector('div[class*="@container/thread"]');
+    if (!container) {
+      console.log("[Chat Nav] Thread container with '@container/thread' not found inside <main>.");
+    }
+    return container;
+  }
+
+  function createSidebarIfNeeded() {
+    if (document.getElementById('chat-nav-sidebar')) {
+      console.log("[Chat Nav] Sidebar already exists.");
+      return;
+    }
+
+    console.log("[Chat Nav] Creating sidebar...");
+    const sidebar = document.createElement('div');
+    sidebar.id = 'chat-nav-sidebar';
+
+    const searchBox = document.createElement('input');
+    searchBox.type = 'text';
+    searchBox.placeholder = 'Search...';
+    searchBox.addEventListener('input', (e) => {
+      console.log("[Chat Nav] Filtering messages with search term:", e.target.value);
+      filterMessages(e.target.value.toLowerCase());
+    });
+    sidebar.appendChild(searchBox);
+
+    const listContainer = document.createElement('ul');
+    listContainer.id = 'chat-nav-list';
+    sidebar.appendChild(listContainer);
+
+    document.body.appendChild(sidebar);
+    console.log("[Chat Nav] Sidebar created successfully.");
+  }
+
+  function clearMessageList() {
+    const listContainer = document.getElementById('chat-nav-list');
+    if (listContainer) {
+      listContainer.innerHTML = '';
+      console.log("[Chat Nav] Cleared existing message list.");
+    }
+  }
+
+  function addMessageListItem(label, onClick) {
+    const listContainer = document.getElementById('chat-nav-list');
+    if (!listContainer) {
+      console.warn("[Chat Nav] Cannot add message item - #chat-nav-list not found.");
+      return;
+    }
+
+    console.log(`[Chat Nav] Adding list item: "${label}"`);
+    const listItem = document.createElement('li');
+    listItem.textContent = label;
+    listItem.addEventListener('click', onClick);
+    listContainer.appendChild(listItem);
+  }
+
+  function filterMessages(searchTerm) {
+    const listContainer = document.getElementById('chat-nav-list');
+    if (!listContainer) {
+      console.warn("[Chat Nav] Cannot filter messages - #chat-nav-list not found.");
+      return;
+    }
+
+    const items = listContainer.querySelectorAll('li');
+    items.forEach(item => {
+      const text = item.textContent.toLowerCase();
+      item.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+    console.log("[Chat Nav] Filter applied.");
+  }
+})();
